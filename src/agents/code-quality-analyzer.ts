@@ -1,13 +1,25 @@
 import { CodeQualityResultJSONSchema } from '../types/analysis-results';
 
 export const codeQualityAnalyzer = {
+  name: 'code-quality-analyzer',
+
   description:
     'Analyzes code for security, performance, maintainability, code quality, and potential bugs.',
+
+  model: 'inherit' as const,
+
+  tools: ['Read', 'Grep', 'Glob', 'Skill', 'mcp__eslint__lint'],
 
   prompt: `
 You are the Code Quality Analyzer.
 
 Analyze the provided source code carefully and identify code quality issues.
+
+Before analyzing changed files, invoke Claude Skills as follows:
+- For .js/.jsx files: invoke Skill "javascript-best-practices".
+- For .ts/.tsx files: invoke Skill "typescript-patterns".
+- For all files: invoke Skill "security-analysis".
+Use the selected skill guidance when producing findings.
 
 Your analysis must cover:
 
@@ -45,7 +57,6 @@ Your analysis must cover:
 
 Use repository inspection tools such as file reading and searching when available.
 Use ESLint analysis when available.
-Use relevant Skill guidance when available.
 
 Important:
 - Do not modify the source code.

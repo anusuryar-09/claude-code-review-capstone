@@ -62,16 +62,7 @@ Pull request number: ${prNumber}
 
 Coordinate the specialized agents and produce the complete ReviewReport.
 
-The specialized agents are:
-
-CODE QUALITY ANALYZER:
-${JSON.stringify(codeQualityAnalyzer)}
-
-TEST COVERAGE ANALYZER:
-${JSON.stringify(testCoverageAnalyzer)}
-
-REFACTORING SUGGESTER:
-${JSON.stringify(refactoringSuggester)}
+The specialized agents are registered with the Claude Agent SDK.
 
 Use the Task tool to invoke each specialized agent independently.
 
@@ -107,7 +98,11 @@ The final response must contain ONLY the structured ReviewReport data.
 
           mcpServers: mcpServersConfig,
 
-          permissionMode: 'bypassPermissions',
+          agents: {
+            [codeQualityAnalyzer.name]: codeQualityAnalyzer,
+            [testCoverageAnalyzer.name]: testCoverageAnalyzer,
+            [refactoringSuggester.name]: refactoringSuggester
+          },
 
           outputFormat: {
             type: 'json_schema',

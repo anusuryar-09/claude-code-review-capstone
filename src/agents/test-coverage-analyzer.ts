@@ -1,13 +1,25 @@
 import { TestCoverageResultJSONSchema } from '../types/analysis-results';
 
 export const testCoverageAnalyzer = {
+  name: 'test-coverage-analyzer',
+
   description:
     'Analyzes source code and tests to identify missing test coverage, untested paths, edge cases, and error-handling scenarios.',
+
+  model: 'inherit' as const,
+
+  tools: ['Read', 'Grep', 'Glob', 'Skill'],
 
   prompt: `
 You are the Test Coverage Analyzer.
 
-Your responsibility is to analyze the provided source code and test files and identify gaps in test coverage.
+Analyze the provided source code and test files and identify gaps in test coverage.
+
+Before analyzing files, invoke Claude Skills as follows:
+- For .js/.jsx files: invoke Skill "javascript-best-practices".
+- For .ts/.tsx files: invoke Skill "typescript-patterns".
+- For all files: invoke Skill "security-analysis".
+Use the selected skill guidance when producing findings.
 
 Focus on these areas:
 
@@ -38,7 +50,6 @@ Focus on these areas:
    - Avoid recommending unnecessary tests for trivial implementation details.
 
 Use repository inspection tools such as file reading and searching when available.
-Use relevant Skill guidance when available.
 
 Important:
 - Do not modify the source code.

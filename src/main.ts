@@ -3,6 +3,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
 import { CodeReviewOrchestrator } from './orchestrator';
 import { ReportGenerator } from './utils/report-generator';
+import { formatError } from './utils/error-handler';
 // Load environment variables
 dotenv.config();
 
@@ -75,29 +76,32 @@ async function main() {
     const reportsDir = path.join(process.cwd(), 'reports');
     await mkdir(reportsDir, { recursive: true });
 
-    const baseName = `${owner}-${repo}-pr-${prNumber}`;
-
     await writeFile(
-      path.join(reportsDir, `${baseName}.md`),
+      path.join(reportsDir, 'report.md'),
       markdownReport,
       'utf-8'
     );
 
     await writeFile(
-      path.join(reportsDir, `${baseName}.html`),
+      path.join(reportsDir, 'report.html'),
       htmlReport,
       'utf-8'
     );
 
     await writeFile(
-      path.join(reportsDir, `${baseName}.json`),
+      path.join(reportsDir, 'report.json'),
       jsonReport,
       'utf-8'
     );
 
     console.log(`📄 Reports saved to ${reportsDir}`);
   } catch (error) {
-    console.error('Error:', error);
+    console.error('❌ Code review failed.');
+    console.error(formatError(error));
+    console.error(
+      `Try: npm run dev -- ${owner} ${repo} ${prNumber}`
+    );
+    process.exit(1);
   }
 }
 
